@@ -1,0 +1,66 @@
+---
+- name: EC2 Tag Searching
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Gather hosts matching tags. This is important.
+      ec2_remote_facts:
+        filters:
+          instance-state-name: running
+          "tag:ROLES": "{{ cli_roles }}"
+          "tag:ENV": "{{ cli_env }}"
+      register: tagged_instances
+
+    # Instead of using add_host, this could be used with the 'set_fact' module
+    # All depends on how you want to roll. The change is trivial.
+    - name: Create new group that matches the filtered tags. This is important.
+      add_host:
+        hostname: "{{ item }}"
+        groups: "new_group"
+      with_items:
+        - "{{ tagged_instances.instances | map(attribute='private_ip_address') | list }}"
+
+    - name: Get instance names of the matching hosts strictly so we can see what the servers 'are'. This is not important.
+      debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      with_together:
+        - "{{ tagged_instances.instances | map(attribute='tags.Name') | list }}"
+        - "{{ tagged_instances.instances | map(attribute='private_ip_address') | list }}"
+
+    - name: Print name of hosts in the new_group group. This is important.
+      debug:
+        var: groups['new_group']
+
+    - name: Get rid of a single arbitrary node from the 'new_group' list. This is not important.
+      debug:
+        msg: "{{ groups['new_group'] | difference(item) }}"
+      with_items:
+        - "{{ groups['new_group'] | random }}"
+
+    # This simulates the logic I would use when creating a cluster of
+    # consul nodes. Upon starting up my consul cluster, I don't need a
+    # server trying to join itself, that would be silly. Therefore, I
+    # can remove the instance from the 'start_join' list in consul.
+    # This is simulated by the random and difference filters below.
+    - name: Set a fact based on the new_group - 1 instance
+      set_fact:
+        consul_servers: "{{ groups['new_group'] | difference(item) }}"
+      with_items:
+        - "{{ groups['new_group'] | random }}"
+
+    - name: Inline jinja loop to print out the list of servers
+      debug:
+        msg: |
+          {% for h in consul_servers -%}
+          "{{ h }}"{% if not loop.last -%},{% endif -%}
+          {% endfor -%}
+
+    - name: Template with the jinja loop
+      template:
+        src: config.tmpl.j2
+        dest: ./config.txt
+
+    - name: Run this in your own shell
+      debug:
+        msg: "cat config.txt"
