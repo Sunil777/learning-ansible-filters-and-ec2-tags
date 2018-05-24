@@ -27,6 +27,11 @@ To get our nodes, we make use of the `ec2_remote_facts` module rather than using
 - - - -
 # Usage
 
+```
+boto version :-  boto3
+Jinja2 version :- Jinja2
+```
+
 Ansible version
 
         >= 2.2.0.0
