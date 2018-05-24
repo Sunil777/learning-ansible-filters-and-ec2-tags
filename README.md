@@ -51,9 +51,7 @@ I hope you can see where this is going.
 
 1. [Master Ansible](https://books.google.com/books?id=bvSoCwAAQBAJ&pg=PA67&lpg=PA67&dq=ansible+nested+filters&source=bl&ots=Nfj9uX6i84&sig=eLmypWMp8ZVLbKkZVFJbZtdDi8w&hl=en&sa=X&ved=0ahUKEwjuhdKmpMrQAhVs5IMKHdhCDa44FBDoAQgaMAA#v=onepage&q=ansible%20nested%20filters&f=false)
 1. [Ansible documentation on filters](http://docs.ansible.com/ansible/playbooks_filters.html)
-1. [Imil's blog](https://imil.net/blog/2016/08/05/Ansible_and_AWS_ASG/)
-1. [Bonovoxly's blog](https://bonovoxly.github.io/2016-02-11-ansible-stuffs-ec2_remote_facts_instead_of_ec2_py)
-1. [CodeCentric.de blog](https://blog.codecentric.de/en/2014/08/jinja2-better-ansible-playbooks-templates/)
+
 
 
 
